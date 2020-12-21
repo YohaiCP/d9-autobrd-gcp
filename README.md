@@ -1,2 +1,2 @@
-# d9-autobrd
-Serverless functions that facilitate automated onboarding of AWS, Azure, and GCP cloud accounts for Dome9.
+# d9-autobrd-gcp
+Serverless function for onboarding GCP projects in Dome9.

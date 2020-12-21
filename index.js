@@ -18,7 +18,7 @@ const dome9 = require('./lib/dome9');
 const gcp = require('./lib/gcp');
 
 /**
- * Onboards supported cloud accounts to Check Point CloudGuard CSPM a.k.a. Dome9.
+ * Onboards GCP projects to Check Point CloudGuard CSPM a.k.a. Dome9.
  * @param {Express.Request} req The API request.
  * @param {Express.Response} res The API response.
  */
@@ -49,7 +49,7 @@ exports.d9AutobrdOnboard = async (req, res) => {
         break;
       default:
         res.status(405);
-        jsonResp['error'] = 'true';
+        console.error('Method not allowed:', req.method);
         break;
     }
     if (gcpIsGo) {
@@ -98,7 +98,7 @@ const clearToBoard = (project, cloudAccountsMap) => {
   var result = false;
   const projectId = project['projectId'];
   const lifecycleState = project['lifecycleState'];
-  const projectInDome9 = isProjectInDome9(project, cloudAccountsMap);
+  const projectInDome9 = isProjectInDome9(projectId, cloudAccountsMap);
   if (projectInDome9) {
     console.log(projectId, "=>", "Project was already onboarded");
   }
@@ -114,6 +114,6 @@ const clearToBoard = (project, cloudAccountsMap) => {
   return result;
 };
 
-const isProjectInDome9 = (project, cloudAccountsMap) => {
-  return cloudAccountsMap.has(project.projectId);
+const isProjectInDome9 = (projectId, cloudAccountsMap) => {
+  return cloudAccountsMap.has(projectId);
 };
