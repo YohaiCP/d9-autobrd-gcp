@@ -66,6 +66,7 @@ exports.d9AutobrdOnboard = async (req, res) => {
 
 const onboardGoogleProjects = async () => {
   var cloudAccountsMap = await dome9.getGoogleCloudAccountsMap();
+  var missingPermissionsSet = await dome9.getMissingPermissionsSet();
   var projects = await gcp.listProjects();
   for (let p of projects) {
     if (clearToBoard(p, cloudAccountsMap)) {
@@ -90,8 +91,23 @@ const onboardGoogleProjects = async () => {
           console.log(p['projectId'], "=>", "Project was onboarded successfully");
         }
       }
+    } else if (hasMissingPermissions(p, cloudAccountsMap, missingPermissionsSet)) {
+      console.log(p['projectId'], "=>", "Project has missing permissions");
+      if (await gcp.enableRequiredAPIServices(p['projectId'])) {
+        console.log(p['projectId'], "=>", "Enabled all required API services in project");
+      }
     }
   }
+};
+
+const hasMissingPermissions = (project, cloudAccountsMap, missingPermissionsSet) => {
+  var result = false;
+  const projectId = project['projectId'];
+  if (isProjectInDome9(projectId, cloudAccountsMap)) {
+    const cloudAccount = cloudAccountsMap.get(projectId);
+    result = missingPermissionsSet.has(cloudAccount.id);
+  }
+  return result;
 };
 
 const clearToBoard = (project, cloudAccountsMap) => {
@@ -107,6 +123,8 @@ const clearToBoard = (project, cloudAccountsMap) => {
   } else if (project['labels']) {
     if (project['labels']['dome9-ignore'] == "true") {
       console.log(projectId, "=>", "Project has the 'dome9-ignore' label set to true");
+    } else {
+      result = !projectInDome9;
     }
   } else {
     result = !projectInDome9;
