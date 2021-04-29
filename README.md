@@ -1,2 +1,2 @@
 # d9-autobrd-gcp
-Serverless function for onboarding GCP projects in Dome9.
+Serverless function for onboarding and monitoring GCP projects in Dome9.
