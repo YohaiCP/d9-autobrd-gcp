@@ -44,7 +44,7 @@ gcloud iam service-accounts create $sa_id --project=$project_id --description="T
 
 gcloud projects add-iam-policy-binding $project_id --member="serviceAccount:$sa_id@$project_id.iam.gserviceaccount.com" --role="projects/$project_id/roles/$role_id"
 
-for binding_project_id in $(gcloud projects list |tail -n +2 |awk '{ print $1 }'); do
+for binding_project_id in $(gcloud projects list |grep PROJECT_ID |awk '{ print $2 }'); do
   gcloud projects add-iam-policy-binding $binding_project_id --member="serviceAccount:$sa_id@$project_id.iam.gserviceaccount.com" --role="roles/editor"
   gcloud projects add-iam-policy-binding $binding_project_id --member="serviceAccount:$sa_id@$project_id.iam.gserviceaccount.com" --role="roles/iam.securityAdmin"
 done
