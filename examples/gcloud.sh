@@ -49,6 +49,6 @@ for binding_project_id in $(gcloud projects list |tail -n +2 |awk '{ print $1 }'
   gcloud projects add-iam-policy-binding $binding_project_id --member="serviceAccount:$sa_id@$project_id.iam.gserviceaccount.com" --role="roles/iam.securityAdmin"
 done
 
-gcloud functions deploy d9AutobrdOnboard --project $project_id --trigger-http --runtime nodejs10 --service-account $sa_id@$project_id.iam.gserviceaccount.com --allow-unauthenticated --max-instances 1 --timeout 540 --env-vars-file runtime.env.yaml
+gcloud functions deploy d9AutobrdOnboard --project $project_id --trigger-http --runtime nodejs14 --service-account $sa_id@$project_id.iam.gserviceaccount.com --allow-unauthenticated --max-instances 1 --timeout 540 --env-vars-file runtime.env.yaml
 
 exit $?
