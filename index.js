@@ -53,7 +53,8 @@ exports.d9AutobrdOnboard = async (req, res) => {
         break;
     }
     if (gcpIsGo) {
-      await onboardGoogleProjects();
+      results = await onboardGoogleProjects();
+      console.log("onboarded: ", results.onboarded, " failed: ", results.failed, " skipped: ", results.skipped, " total: ", results.total);
     }
   } catch (e) {
     res.status(500);
@@ -68,6 +69,9 @@ const onboardGoogleProjects = async () => {
   var cloudAccountsMap = await dome9.getGoogleCloudAccountsMap();
   var missingPermissionsSet = await dome9.getMissingPermissionsSet();
   var projects = await gcp.listProjects();
+  var total = projects.length;
+  var onboarded = 0;
+  var failed = 0;
   for (let p of projects) {
     try {
       if (clearToBoard(p, cloudAccountsMap)) {
@@ -90,6 +94,7 @@ const onboardGoogleProjects = async () => {
           var r = await dome9.createGoogleCloudAccount(p['name'], JSON.parse(saPrivateKeyData));
           if (r.id) {
             console.log(p['projectId'], "=>", "Project was onboarded successfully");
+            onboarded++;
           }
         }
       } else if (hasMissingPermissions(p, cloudAccountsMap, missingPermissionsSet)) {
@@ -101,8 +106,10 @@ const onboardGoogleProjects = async () => {
     } catch (e) {
       console.log(p['projectId'], '=>', "Error onboarding project");
       console.log(e);
+      failed++;
     }
   }
+  return {onboarded: onboarded, failed: failed, skipped: (total - onboarded - failed), total: total};
 };
 
 const hasMissingPermissions = (project, cloudAccountsMap, missingPermissionsSet) => {
