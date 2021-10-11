@@ -69,33 +69,38 @@ const onboardGoogleProjects = async () => {
   var missingPermissionsSet = await dome9.getMissingPermissionsSet();
   var projects = await gcp.listProjects();
   for (let p of projects) {
-    if (clearToBoard(p, cloudAccountsMap)) {
-      if (await gcp.enableRequiredAPIServices(p['projectId'])) {
-        console.log(p['projectId'], "=>", "Enabled all required API services in project");
-      }
-      var serviceAccount = await gcp.getCloudGuardServiceAccount(p['projectId']);
-      if (!serviceAccount['email']) {
-        var saNew = await gcp.createServiceAccount(p['projectId']);
-        console.log(p['projectId'], "=>", "Created 'CloudGuard-Connect' service account");
-        if (saNew['email']) {
-          await gcp.updateProjectIAMPolicy(p, saNew);
+    try {
+      if (clearToBoard(p, cloudAccountsMap)) {
+        if (await gcp.enableRequiredAPIServices(p['projectId'])) {
+          console.log(p['projectId'], "=>", "Enabled all required API services in project");
         }
-      } else {
-        await gcp.deleteServiceAccountKeys(p['projectId'], serviceAccount['email']);
-        console.log(p['projectId'], "=>", "Deleted all 'CloudGuard-Connect' service account keys");
-        var saKey = await gcp.createServiceAccountKey(p['projectId'], serviceAccount['email']);
-        console.log(p['projectId'], "=>", "Created new 'CloudGuard-Connect' service account key");
-        var saPrivateKeyData = Buffer.from(saKey['privateKeyData'], 'base64').toString();
-        var r = await dome9.createGoogleCloudAccount(p['name'], JSON.parse(saPrivateKeyData));
-        if (r.id) {
-          console.log(p['projectId'], "=>", "Project was onboarded successfully");
+        var serviceAccount = await gcp.getCloudGuardServiceAccount(p['projectId']);
+        if (!serviceAccount['email']) {
+          var saNew = await gcp.createServiceAccount(p['projectId']);
+          console.log(p['projectId'], "=>", "Created 'CloudGuard-Connect' service account");
+          if (saNew['email']) {
+            await gcp.updateProjectIAMPolicy(p, saNew);
+          }
+        } else {
+          await gcp.deleteServiceAccountKeys(p['projectId'], serviceAccount['email']);
+          console.log(p['projectId'], "=>", "Deleted all 'CloudGuard-Connect' service account keys");
+          var saKey = await gcp.createServiceAccountKey(p['projectId'], serviceAccount['email']);
+          console.log(p['projectId'], "=>", "Created new 'CloudGuard-Connect' service account key");
+          var saPrivateKeyData = Buffer.from(saKey['privateKeyData'], 'base64').toString();
+          var r = await dome9.createGoogleCloudAccount(p['name'], JSON.parse(saPrivateKeyData));
+          if (r.id) {
+            console.log(p['projectId'], "=>", "Project was onboarded successfully");
+          }
+        }
+      } else if (hasMissingPermissions(p, cloudAccountsMap, missingPermissionsSet)) {
+        console.log(p['projectId'], "=>", "Project has missing permissions");
+        if (await gcp.enableRequiredAPIServices(p['projectId'])) {
+          console.log(p['projectId'], "=>", "Enabled all required API services in project");
         }
       }
-    } else if (hasMissingPermissions(p, cloudAccountsMap, missingPermissionsSet)) {
-      console.log(p['projectId'], "=>", "Project has missing permissions");
-      if (await gcp.enableRequiredAPIServices(p['projectId'])) {
-        console.log(p['projectId'], "=>", "Enabled all required API services in project");
-      }
+    } catch (e) {
+      console.log(p['projectId'], '=>', "Error onboarding project");
+      console.log(e);
     }
   }
 };
