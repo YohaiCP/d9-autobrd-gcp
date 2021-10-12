@@ -54,7 +54,7 @@ exports.d9AutobrdOnboard = async (req, res) => {
     }
     if (gcpIsGo) {
       results = await onboardGoogleProjects();
-      console.log("onboarded: ", results.onboarded, " failed: ", results.failed, " skipped: ", results.skipped, " total: ", results.total);
+      console.log("onboarded:", results.onboarded, "failed:", results.failed, "skipped:", results.skipped, "total:", results.total);
     }
   } catch (e) {
     res.status(500);
@@ -94,6 +94,10 @@ const onboardGoogleProjects = async () => {
           var r = await dome9.createGoogleCloudAccount(p['name'], JSON.parse(saPrivateKeyData));
           if (r.id) {
             console.log(p['projectId'], "=>", "Project was onboarded successfully");
+            var ar = await gcp.addOnboardedLabel(p);
+            if (!ar) {
+              console.log(p['projectId'], "=>", "Failed to add onboarded label to project");
+            }
             onboarded++;
           }
         }
@@ -101,6 +105,11 @@ const onboardGoogleProjects = async () => {
         console.log(p['projectId'], "=>", "Project has missing permissions");
         if (await gcp.enableRequiredAPIServices(p['projectId'])) {
           console.log(p['projectId'], "=>", "Enabled all required API services in project");
+        }
+      } else {
+        var ar = await gcp.addOnboardedLabel(p);
+        if (!ar) {
+          console.log(p['projectId'], "=>", "Failed to add onboarded label to project");
         }
       }
     } catch (e) {
@@ -129,15 +138,6 @@ const clearToBoard = (project, cloudAccountsMap) => {
   const projectInDome9 = isProjectInDome9(projectId, cloudAccountsMap);
   if (projectInDome9) {
     console.log(projectId, "=>", "Project was already onboarded");
-  }
-  if (lifecycleState != 'ACTIVE') {
-    console.log(projectId, "=>", `Project in unsupported state '{$lifecycleState}'`);
-  } else if (project['labels']) {
-    if (project['labels']['dome9-ignore'] == "true") {
-      console.log(projectId, "=>", "Project has the 'dome9-ignore' label set to true");
-    } else {
-      result = !projectInDome9;
-    }
   } else {
     result = !projectInDome9;
   }
