@@ -38,6 +38,10 @@ README.md
 runtime.env.yaml
 EOF
 
+gcloud services enable cloudbuild.googleapis.com --project=$project_id
+gcloud services enable iam.googleapis.com --project=$project_id
+gcloud services enable cloudresourcemanager.googleapis.com --project=$project_id
+
 gcloud iam roles create $role_id --project=$project_id --file=custom.role.yaml
 
 gcloud iam service-accounts create $sa_id --project=$project_id --description="The service account for the d9-autobrd-gcp cloud function" --display-name="D9 Autobrd"
