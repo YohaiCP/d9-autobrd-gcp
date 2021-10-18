@@ -94,8 +94,7 @@ const onboardGoogleProjects = async () => {
           var r = await dome9.createGoogleCloudAccount(p['name'], JSON.parse(saPrivateKeyData));
           if (r.id) {
             console.log(p['projectId'], "=>", "Project was onboarded successfully");
-            var ar = await gcp.addOnboardedLabel(p);
-            if (!ar) {
+            if (!await gcp.addOnboardedLabel(p)) {
               console.log(p['projectId'], "=>", "Failed to add onboarded label to project");
             }
             onboarded++;
@@ -107,8 +106,7 @@ const onboardGoogleProjects = async () => {
           console.log(p['projectId'], "=>", "Enabled all required API services in project");
         }
       } else {
-        var ar = await gcp.addOnboardedLabel(p);
-        if (!ar) {
+        if (!await gcp.addOnboardedLabel(p)) {
           console.log(p['projectId'], "=>", "Failed to add onboarded label to project");
         }
       }
