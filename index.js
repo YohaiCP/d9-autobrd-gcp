@@ -86,6 +86,7 @@ const onboardGoogleProjects = async () => {
             await gcp.updateProjectIAMPolicy(p, saNew);
           }
         } else {
+          await gcp.updateProjectIAMPolicy(p, serviceAccount);
           await gcp.deleteServiceAccountKeys(p['projectId'], serviceAccount['email']);
           console.log(p['projectId'], "=>", "Deleted all 'CloudGuard-Connect' service account keys");
           var saKey = await gcp.createServiceAccountKey(p['projectId'], serviceAccount['email']);
