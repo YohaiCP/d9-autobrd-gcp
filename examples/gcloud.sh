@@ -1,15 +1,17 @@
 #!/bin/bash
 
-project_id=your-project-id-goes-here
-
+##### NO NEED TO EDIT THE VALUES BELOW #####
 role_id=d9.autobrd
 role_title="D9 Autobrd"
-
 sa_id=d9-autobrd
+##### NO NEED TO EDIT THE VALUES ABOVE #####
 
-d9_id=youridgoeshere
-d9_secret=yoursecretgoeshere
-psk=yourpskgoeshere
+##### MUST EDIT THE VALUES BELOW #####
+project_id=<your_project_id_goes_here>
+d9_id=<your_d9_api_id_goes_here>
+d9_secret=<your_d9_api_secret_goes_here>
+psk=<your_psk_goes_here>
+##### MUST EDIT THE VALUES ABOVE #####
 
 cat << EOF > custom.role.yaml
 title: $role_title
@@ -29,6 +31,8 @@ cat << EOF > .gcloudignore
 .git
 .gitignore
 
+gcloud.sh
+gcloud-with-secrets.sh
 custom.role.yaml
 examples
 LICENSE
