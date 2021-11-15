@@ -21,3 +21,22 @@ user@cloudshell:~ (your-project-12345)$ cd d9-autobrd-gcp
 ```
 user@cloudshell:~/d9-autobrd-gcp (your-project-12345)$ cp examples/gcloud-with-secrets.sh .
 ```
+
+5. Edit the indicated section of the gcloud shell script. Provide the values that are correct and necessary for your environment:
+
+```
+##### MUST EDIT THE VALUES BELOW #####
+project_id=<your_project_id_goes_here>
+d9_id=<your_d9_api_id_goes_here>
+d9_secret=<your_d9_api_secret_goes_here>
+psk=<your_psk_goes_here>
+##### MUST EDIT THE VALUES ABOVE #####
+```
+
+6. Execute the gcloud shell script to being the install:
+
+```
+user@cloudshell:~/d9-autobrd-gcp (your-project-12345)$ ./gcloud-with-secrets.sh
+```
+
+7. The gcloud shell script will finish by deploying the cloud function in the GCP environment.
