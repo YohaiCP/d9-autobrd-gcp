@@ -1,6 +1,10 @@
 # d9-autobrd-gcp
 Serverless function for onboarding and monitoring GCP projects in Dome9.
 
+## Prerequisites for installation
+
+1. A user with appropriate permissions within the GCP environment to complete the installation via a gcloud shell script.
+
 ## Install via gcloud shell
 
 1. Open a cloud shell terminal.
@@ -33,7 +37,7 @@ psk=<your_psk_goes_here>
 ##### MUST EDIT THE VALUES ABOVE #####
 ```
 
-6. Execute the gcloud shell script to being the install:
+6. Execute the gcloud shell script to begin the install:
 
 ```
 user@cloudshell:~/d9-autobrd-gcp (your-project-12345)$ ./gcloud-with-secrets.sh
