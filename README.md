@@ -3,7 +3,7 @@ Serverless function for onboarding and monitoring GCP projects in Dome9.
 
 ## Prerequisites for installation
 
-1. A user with appropriate permissions within the GCP environment to complete the installation via a gcloud shell script.
+1. A user with appropriate permissions within the GCP environment (e.g. owner/editor in each project) to complete the installation via a gcloud shell script.
 
 ## Install via gcloud shell
 
