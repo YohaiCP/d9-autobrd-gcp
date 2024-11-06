@@ -14,6 +14,7 @@ project_id=<your_project_id_goes_here>
 d9_id=<your_d9_api_id_goes_here>
 d9_secret=<your_d9_api_secret_goes_here>
 psk=<your_psk_goes_here>
+base_url=
 ##### MUST EDIT THE VALUES ABOVE #####
 
 cat << EOF > custom.role.yaml
@@ -36,7 +37,7 @@ $psk
 EOF
 
 cat << EOF > runtime.env.yaml
-D9_BASE_URL: "https://api.dome9.com/v2"
+D9_BASE_URL: "${base_url:-https://api.dome9.com/v2}"
 GCP_PROJECT_LIST_LIMIT: "10"
 EOF
 
@@ -99,6 +100,6 @@ for binding_project_id in $(gcloud projects list |grep PROJECT_ID |awk '{ print 
   gcloud projects add-iam-policy-binding $binding_project_id --member="serviceAccount:$sa_id@$project_id.iam.gserviceaccount.com" --role="roles/iam.securityAdmin"
 done
 
-gcloud beta functions deploy d9AutobrdOnboard --project $project_id --trigger-http --runtime nodejs14 --service-account $sa_id@$project_id.iam.gserviceaccount.com --allow-unauthenticated --max-instances 1 --timeout 540 --env-vars-file runtime.env.yaml --set-secrets="D9_ID=$secrets_rp_d9_id:1,D9_SECRET=$secrets_rp_d9_secret:1,PSK=$secrets_rp_psk:1"
+gcloud beta functions deploy d9AutobrdOnboard --project $project_id --trigger-http --runtime nodejs20 --service-account $sa_id@$project_id.iam.gserviceaccount.com --allow-unauthenticated --max-instances 1 --timeout 540 --env-vars-file runtime.env.yaml --set-secrets="D9_ID=$secrets_rp_d9_id:1,D9_SECRET=$secrets_rp_d9_secret:1,PSK=$secrets_rp_psk:1"
 
 exit $?
