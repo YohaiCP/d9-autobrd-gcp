@@ -11,7 +11,7 @@ Serverless function for onboarding and monitoring GCP projects in Dome9.
 2. Clone d9-autobrd-gcp from github:
 
 ```
-git clone https://github.com/dana-at-cp/d9-autobrd-gcp.git
+git clone https://github.com/YohaiCP/d9-autobrd-gcp.git
 ```
 
 3. Change to the newly created 'd9-autobrd-gcp' directory:
