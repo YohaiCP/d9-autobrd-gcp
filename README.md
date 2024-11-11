@@ -54,6 +54,6 @@ GET https://<your_cloud_function_url_goes_here>?psk=<your_psk_goes_here>
 ```
 POST https://<your_cloud_function_url_goes_here>
 {
-    "psk": "<your_psk_goes_here>
+    "psk": <your_psk_goes_here>
 }
 ```
