@@ -17,6 +17,19 @@ psk=<your_psk_goes_here>
 base_url=
 ##### MUST EDIT THE VALUES ABOVE #####
 
+# Roles
+VIEWER_ROLE="roles/viewer"
+IAM_SECURITY_REVIEWER="roles/iam.securityReviewer"
+CLOUD_ASSET_VIEWER="roles/cloudasset.viewer"
+SERVICE_USAGE_CONSUMER="roles/serviceusage.serviceUsageConsumer"
+
+CSMP_ROLES_LIST=(
+  $VIEWER_ROLE
+  $IAM_SECURITY_REVIEWER
+  $CLOUD_ASSET_VIEWER
+  $SERVICE_USAGE_CONSUMER
+)
+
 cat << EOF > custom.role.yaml
 title: $role_title
 description: Custom role for d9-autobrd-gcp cloud function
@@ -95,9 +108,10 @@ echo $secrets_rp_d9_id
 echo $secrets_rp_d9_secret
 echo $secrets_rp_psk
 
-for binding_project_id in $(gcloud projects list |grep PROJECT_ID |awk '{ print $2 }'); do
-  gcloud projects add-iam-policy-binding $binding_project_id --member="serviceAccount:$sa_id@$project_id.iam.gserviceaccount.com" --role="roles/editor"
-  gcloud projects add-iam-policy-binding $binding_project_id --member="serviceAccount:$sa_id@$project_id.iam.gserviceaccount.com" --role="roles/iam.securityAdmin"
+for role in ${CSMP_ROLES_LIST[@]}; do
+  for binding_project_id in $(gcloud projects list |grep PROJECT_ID |awk '{ print $2 }'); do
+    gcloud projects add-iam-policy-binding $binding_project_id --member="serviceAccount:$sa_id@$project_id.iam.gserviceaccount.com" --role=$role
+  done
 done
 
 gcloud beta functions deploy d9AutobrdOnboard --project $project_id --trigger-http --runtime nodejs20 --service-account $sa_id@$project_id.iam.gserviceaccount.com --allow-unauthenticated --max-instances 1 --timeout 540 --env-vars-file runtime.env.yaml --set-secrets="D9_ID=$secrets_rp_d9_id:1,D9_SECRET=$secrets_rp_d9_secret:1,PSK=$secrets_rp_psk:1"
