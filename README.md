@@ -1,5 +1,8 @@
 # d9-autobrd-gcp
-Serverless function for onboarding and monitoring GCP projects in Dome9.
+Deploy a serverless function for onboarding and monitoring GCP projects in Dome9 (CloudGuard).\
+The function is deployed in the project specificed by the user in < project_id > script input parameter.\
+The function will scan all projects in the organization of < project_id > and will onboard them to Dome9.\
+The function creates a service account per project and uses them to onboard to Dome9.
 
 ## Prerequisites for installation
 
